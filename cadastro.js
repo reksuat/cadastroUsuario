@@ -5,15 +5,27 @@ module.exports={
 const usuarios = [];
 let ultimoIdInserido = 1;
 
-const emailNaoDuplicado = (email) => {
+const emailNaoDuplicado = (email, id) => {
+    if(usuarios.find(usuario => usuario.email == email && usuario.id != id)) {
+        console.log("Email duplicado")
+        return false
+    }
 
-}
-function modelo() {
+    return true
+};
+function modelo(id = ultimoIdInserido++) {
     const nome = prompt("Nome: ");
     const email = prompt("E-mail: ");
-    const telefones = prompt("Tipo Variavel: ")
-    let id  
-    if (nome !== "" && email !== "" && telefones !=="") {
+    const telefones = [];
+    while (true) {
+        const telefone= prompt("Digite seu número ou 0 para sair: ");
+        if (telefone==0) {
+            break
+        }else{
+            telefones.push(telefone)
+        }
+    }  
+    if (nome !== "" && email !== "" && telefones !=="" && emailNaoDuplicado(email, id)) {
         return {
             nome,
             email,
@@ -27,7 +39,6 @@ function modelo() {
 }
 function criar() {
     let usuario = modelo()
-    usuario.id = ultimoIdInserido++
     if (usuario!=undefined ) {
         usuarios.push(usuario)
         console.log("Usuário cadastrado com sucesso");
@@ -41,15 +52,11 @@ function atualizar() {
     const id = +prompt("Qual id deseja atualizar? ");
     const usuario = modelo(id) 
     const indice = usuarios.findIndex(usuario => id == usuario.id) //continuar daqui 
-    if (usuario !== undefined) {
-        usuarios.forEach((pessoa, indice) => {
-            if (pessoa.id == id) { // se o id informado for igual ao id do registro, é nesse registro que ocorrerá a atualização/substituição
-            usuarios[indice] = usuario;
-            }
-        });
+    if (usuario !== undefined && indice!= -1) {
+        usuarios[indice] = usuario
         console.log("usuario atualizado com sucesso. ");
-
-        } else {
+ 
+    } else {
         console.log("Falha na atualização");
         }
 }
@@ -76,9 +83,10 @@ function listar() {
     console.log(`
     ID: ${usuario.id}
     Nome: ${usuario.nome }
-    E-mail: ${usuario.email}
-    Telefones: ${usuario.telefones}
-    ` );
+    E-mail: ${usuario.email}` );
+    usuario.telefones.forEach((telefone) => {
+        console.log(`Telefone: ${telefone}`);
+      });
     });
     return true;
     }
